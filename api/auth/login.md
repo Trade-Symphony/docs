@@ -10,9 +10,11 @@ This endpoint allows users to login to their account by providing the required d
 
 ### Headers
 
-| Key          | Value            | Required |
-| ------------ | ---------------- | -------- |
-| Content-Type | application/json | Yes      |
+| Key             | Value            | Required |
+| --------------- | ---------------- | -------- |
+| Content-Type    | application/json | Yes      |
+| User-Agent      | -                | Yes      |
+| X-Forwarded-For | -                | Yes      |
 
 ### Request Body
 
@@ -73,6 +75,8 @@ This endpoint allows users to login to their account by providing the required d
 
 ## Notes:
 
-- Endpoint needs to be rate limited to 1 request per second.
+- Endpoint is rate limited to 1 request per second.
+- The session token is generated securely (SHA-256 hash of random bytes).
+- Both the user agent and the ip address of the user is stored to minimalise session hijacking.
 
 [^password]: Refer to Checking for compromised passwords in the Copenhagen book (https://thecopenhagenbook.com/password-authentication#checking-for-compromised-passwords)
