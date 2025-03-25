@@ -34,7 +34,7 @@ This endpoint allows users to login to their account by providing the required d
 
 `username`:
 
-- If `username` does not exist return [`400`](#400-conflict) with message: `Invalid Username`
+- If `username` does not exist return [`400`](#400-bad-request) with message: `Invalid Username`
 
 `password`:
 
