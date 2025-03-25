@@ -1,10 +1,18 @@
-## Endpoint
-
-**POST** `/auth/login`
+# Endpoint: `/auth/login`
 
 ## Description
 
-This endpoint allows users to login to their account by providing the required details.
+This endpoint is for operations related to login.
+
+#### Methods:
+
+- [POST](#method-post)
+
+## Method: `POST`
+
+## Description
+
+This method allows users to login to their account by providing the required details.
 
 ## Request
 

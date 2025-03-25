@@ -1,10 +1,18 @@
-## Endpoint
-
-**POST** `/auth/register`
+# Endpoint: `/auth/register`
 
 ## Description
 
-This endpoint allows users to register a new account by providing the required details.
+This endpoint is for operations related to registeration of users.
+
+#### Methods:
+
+- [POST](#method-post)
+
+## Method: `POST`
+
+## Description
+
+This method allows users to register a new account by providing the required details.
 
 ## Request
 

@@ -1,10 +1,18 @@
-## Endpoint
-
-**POST** `/auth/session`
+# Endpoint: `/auth/session`
 
 ## Description
 
-This endpoint allows the webapp to verify the validity of the session.
+This endpoint is for operations related to sessions
+
+#### Methods:
+
+- [POST](#method-post)
+
+## Method: `POST`
+
+## Description
+
+This method allows the webapp to verify the validity of the session.
 
 ## Request
 
