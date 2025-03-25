@@ -40,15 +40,27 @@ This method allows the webapp to verify the validity of the session.
 
 `token`:
 
-- If `token` does not exist in databse return [`400`](#400-bad-request) with message: `Invalid token`
+- If `token` does not exist in databse return [`400`](#400-bad-request) with message: `Invalid token`.
+- If `token` is valid, return [`200`](#200-ok).
 
 ## Response
 
-### Success Response (201 Created)
+### Success Response
+
+#### 200 OK
 
 ```json
 {
   "success": true
+}
+```
+
+#### 201 Created
+
+```json
+{
+  "success": true,
+  "expirationTime": "<timestamp>"
 }
 ```
 
@@ -75,3 +87,4 @@ This method allows the webapp to verify the validity of the session.
 ## Notes:
 
 - If either the User agent or the IP address is different than the one stored, delete the session from the server side and return [`409`](#409-conflict) with message: `Conflicting User agent/IP`.
+- If the session key is used within 3 hours of expiry, update the expiration time so it will be valid for another 6 hours. Return [`201`](#201-created) with timestamp for the new expiration date.
