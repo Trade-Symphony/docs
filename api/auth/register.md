@@ -89,6 +89,8 @@ This endpoint allows users to register a new account by providing the required d
 
 ## Notes:
 
-- Endpoint needs to be rate limited to 1 request per second.
+- Endpoint is rate limited to 1 request per second.
+- The password is hashed using scrypt. [^scrypt_min]
 
-[^password]: Refer to Checking for compromised passwords in the Copenhagen book (https://thecopenhagenbook.com/password-authentication#checking-for-compromised-passwords)
+[^password]: Refer to Checking for compromised passwords in the Copenhagen book (https://thecopenhagenbook.com/password-authentication#checking-for-compromised-passwords).
+[^scrypt_min]: Refer to Scrypt in the Copenhagen book for the minimum parameters for scrypt (https://thecopenhagenbook.com/password-authentication#scrypt).
