@@ -2,6 +2,99 @@
 
 This document outlines DevOps approaches for a Python-based ML service with agentic aspects that scrapes and updates a central database during off-peak trading hours in different geographical regions.
 
+## 1. Geographic Scrapers in a Single Repo, Multi-Processed on a Single Instance
+
+**Concept:**
+
+* Maintain all region-specific scraper code within a single repository.
+* Deploy this repository to a single compute instance (e.g., a powerful VM or container).
+* Utilize Python's advanced scheduling libraries (like `APScheduler` with timezone support) and multiprocessing capabilities to trigger scrapers for each region during their respective off-peak hours.
+
+**DevOps Considerations:**
+
+* **Code Management:**
+    * Single Git repository for all scrapers.
+    * Clear directory structure to organize region-specific code.
+    * Version control for all scraper logic.
+* **Build & Deployment:**
+    * Package the entire application (including all scraper dependencies) into a deployable unit (e.g., a Docker container).
+    * Deploy the container to the chosen compute instance.
+    * Automated deployment process using CI/CD pipelines (e.g., GitHub Actions, GitLab CI/CD).
+* **Scheduling:**
+    * Implement `APScheduler` within the application.
+    * Configure jobs with timezone awareness to trigger scraper functions at the correct local off-peak times for each region.
+    * Utilize multiprocessing (`multiprocessing` module) to run multiple region-specific scrapers concurrently during their scheduled windows, maximizing resource utilization of the single instance.
+* **Configuration Management:**
+    * Store region-specific configurations (target website URLs, API keys, off-peak hour definitions, database credentials) in a centralized configuration file or environment variables.
+    * Ensure the application can load the correct configuration based on the region being processed.
+* **Monitoring & Logging:**
+    * Centralized logging for all scraper processes running on the instance. Include region identifiers in logs.
+    * Monitor the resource utilization (CPU, memory, network) of the single instance.
+    * Implement application-level monitoring to track the success/failure of each regional scrape and update process.
+* **Scalability:**
+    * Scaling vertically (upgrading the compute instance) is the primary option. This can become expensive and has limitations.
+    * Horizontal scaling (adding more instances) would require significant architectural changes to avoid data duplication and scheduling conflicts.
+* **Resilience:**
+    * Implement error handling and retry mechanisms within the scrapers.
+    * Consider process monitoring to automatically restart failed scraper processes.
+
+**Pros:**
+
+* Simpler initial infrastructure setup (single instance).
+* Potentially lower cost for initial deployment.
+* Centralized code management.
+
+**Cons:**
+
+* Limited scalability beyond the capacity of a single instance.
+* Resource contention if multiple scrapers run concurrently and heavily.
+* Single point of failure for all regions.
+* Managing dependencies for all regions in one environment can become complex.
+
+## 2. Independent Scrapers Triggered by CloudWatch (or Equivalent)
+
+**Concept:**
+
+* Develop each region-specific scraper as an independent, deployable unit (e.g., a serverless function like AWS Lambda, Azure Function, Google Cloud Function, or a container).
+* Utilize a cloud-based event scheduler (e.g., AWS CloudWatch Events/EventBridge, Azure Event Grid/Logic Apps, Google Cloud Scheduler) to trigger each scraper at its respective off-peak local time.
+
+**DevOps Considerations:**
+
+* **Code Management:**
+    * Multiple options:
+        * Separate repositories for each region's scraper (more isolation, potentially more overhead).
+        * Single repository with separate build/deployment configurations for each region's scraper.
+* **Build & Deployment:**
+    * Automated build and deployment pipelines for each scraper.
+    * Package each scraper with its specific dependencies.
+    * Deploy as serverless functions or containerized applications to the cloud provider.
+* **Scheduling:**
+    * Configure cloud scheduler rules for each region, setting the schedule based on the local off-peak hours and the corresponding timezone.
+    * The scheduler will trigger the appropriate scraper (function or container) at the defined time.
+* **Configuration Management:**
+    * Store region-specific configurations (target URLs, API keys, database credentials) securely using cloud provider secrets management services (e.g., AWS Secrets Manager, Azure Key Vault, Google Cloud Secret Manager).
+    * Pass configurations to the scrapers as environment variables or retrieve them from the secrets manager.
+* **Monitoring & Logging:**
+    * Leverage the cloud provider's monitoring and logging services (e.g., AWS CloudWatch Logs, Azure Monitor Logs, Google Cloud Logging) for each independent scraper.
+    * Set up alerts based on error rates, execution duration, and other relevant metrics.
+* **Scalability:**
+    * Highly scalable, especially with serverless functions, as the cloud provider automatically manages scaling based on demand. Containerized scrapers can also be auto-scaled.
+* **Resilience:**
+    * Cloud platforms offer inherent resilience. Configure retry mechanisms within the scrapers or leverage the scheduler's retry policies.
+
+**Pros:**
+
+* Highly scalable and resilient architecture.
+* Decoupled components, making maintenance and updates easier for individual regions.
+* Pay-as-you-go cost model for serverless functions can be cost-effective.
+* Clear separation of concerns for each region.
+
+**Cons:**
+
+* More complex initial setup with multiple independent deployments and scheduler configurations.
+* Potential overhead in managing multiple codebases or deployment configurations.
+* Communication with the central database needs to be robust and handle concurrent connections from multiple scrapers.
+
 ## 3. Message Queue Based System
 
 **Concept:**
